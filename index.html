@@ -3,39 +3,36 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Caderno de Inglês</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📓</text></svg>">
+<title>CBJR English</title>
+<meta name="theme-color" content="#0a0a0a">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23f2b705'/><text x='50' y='66' font-size='46' font-family='Arial' font-weight='900' text-anchor='middle' fill='%23120e02'>013</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
 <style>
+/* Identidade do Quiz CBJR V2: preto, carvão e ouro #f2b705 como única cor de destaque.
+   Fonte de títulos: Elektrix (copiada do repositório do Quiz para assets/). */
+@font-face{font-family:'Elektrix';src:url('assets/elektrix-bold.woff2') format('woff2'),url('assets/elektrix-bold.woff') format('woff');font-weight:bold;font-display:swap}
 :root{
-  --bg:#E9EEF6; --page:#FFFFFF; --ink:#1B2340; --muted:#56607C; --rule:#E3EAF5; --margin:#E46A60;
-  --pen:#C62E26; --penbg:#FDEEEC; --ok:#1C7A4F; --okbg:#E5F3EB; --okshadow:#12573A; --penshadow:#8E1F19; --marker:#FFE57A; --line:#C8D2E3;
-  --btn:#1F3A8A; --btnink:#FFFFFF; --btnshadow:#14265C; --soft:#F2F5FA; --chip:#FFFFFF;
-}
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
-    --bg:#0D1322; --page:#151D31; --ink:#E4E9F5; --muted:#9BA5C1; --rule:#1D2740; --margin:#9E4038;
-    --pen:#FF8378; --penbg:#3A1C1A; --ok:#62CF98; --okbg:#143023; --okshadow:#2F8A5D; --penshadow:#B24A41; --marker:#7A6614; --line:#2B3653;
-    --btn:#8AA6FF; --btnink:#0D1322; --btnshadow:#4F66B8; --soft:#1B2440; --chip:#1E2845;
-  }
-}
-:root[data-theme="dark"]{
-  --bg:#0D1322; --page:#151D31; --ink:#E4E9F5; --muted:#9BA5C1; --rule:#1D2740; --margin:#9E4038;
-  --pen:#FF8378; --penbg:#3A1C1A; --ok:#62CF98; --okbg:#143023; --okshadow:#2F8A5D; --penshadow:#B24A41; --marker:#7A6614; --line:#2B3653;
-  --btn:#8AA6FF; --btnink:#0D1322; --btnshadow:#4F66B8; --soft:#1B2440; --chip:#1E2845;
+  color-scheme:dark;
+  --bg:#0a0a0a; --page:#141414; --ink:#f3f1ec; --muted:#8f8b83; --rule:#1f1f1f;
+  --pen:#e74c3c; --penbg:#2a1413; --ok:#1ed760; --okbg:#0f2618; --okshadow:#0f8a3c; --penshadow:#9b2c21;
+  --marker:rgba(242,183,5,.32); --line:#2c2c2c;
+  --btn:#f2b705; --btnink:#120e02; --btnshadow:#8f6c00; --soft:#1b1b1b; --chip:#1b1b1b;
+  --gold:#f2b705; --display:'Elektrix',Impact,'Arial Black',sans-serif;
 }
 *{box-sizing:border-box}
 html,body{margin:0}
-body{background:var(--bg);color:var(--ink);font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
-#errbar{position:sticky;top:0;z-index:10;background:var(--pen);color:#fff;padding:10px 16px;font-size:15px}
+body{background:var(--bg) radial-gradient(ellipse 90% 40% at 50% 0%,rgba(242,183,5,.06),transparent 60%) no-repeat fixed;color:var(--ink);font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.topbar{position:sticky;top:0;z-index:9;display:flex;align-items:center;gap:10px;height:52px;padding:0 16px;background:rgba(8,8,8,.92);border-bottom:1px solid rgba(242,183,5,.18);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.brand-mark{width:32px;height:32px;display:grid;place-items:center;background:var(--gold);color:#120e02;font-weight:900;font-size:.8rem;box-shadow:0 0 18px rgba(242,183,5,.28)}
+.brand-text{font-family:var(--display);color:var(--gold);font-size:1.3rem;line-height:1;letter-spacing:.03em;text-decoration:none}
+#errbar{position:sticky;top:52px;z-index:10;background:var(--pen);color:#fff;padding:10px 16px;font-size:15px}
 .wrap{max-width:680px;margin:0 auto;padding:20px 14px 60px}
-.page{background:var(--page);border-radius:6px;padding:26px 24px 28px 46px;position:relative;box-shadow:0 1px 0 var(--line);
-  background-image:linear-gradient(to right,transparent 30px,var(--margin) 30px,var(--margin) 32px,transparent 32px);}
+.page{background:var(--page);border:1px solid rgba(255,255,255,.07);padding:24px 22px 26px;position:relative}
 .page + .page{margin-top:14px}
-h1{font-size:1.75rem;line-height:1.2;margin:0 0 10px;letter-spacing:-.01em}
-h2{font-size:1.25rem;line-height:1.3;margin:0 0 8px}
+h1{font-family:var(--display);font-weight:bold;color:var(--gold);font-size:1.9rem;line-height:1.15;margin:0 0 10px;letter-spacing:.02em}
+h2{font-family:var(--display);font-weight:bold;font-size:1.3rem;line-height:1.25;margin:0 0 8px;letter-spacing:.02em}
 p{margin:0 0 12px}
 .muted{color:var(--muted)}
 .small{font-size:.9rem}
@@ -43,21 +40,21 @@ mark{background:linear-gradient(transparent 45%,var(--marker) 45%);color:inherit
 .hand{font-family:"Caveat","Comic Sans MS",cursive;font-size:1.45rem;line-height:1.2;color:var(--pen)}
 .hand.ok{color:var(--ok)}
 button{font:inherit;cursor:pointer}
-.btn{display:inline-block;background:var(--btn);color:var(--btnink);border:0;border-radius:10px;padding:12px 20px;font-weight:700;font-size:1rem;box-shadow:0 4px 0 var(--btnshadow);transition:transform .08s,box-shadow .08s}
+.btn{display:inline-block;background:var(--btn);color:var(--btnink);border:0;border-radius:0;padding:12px 20px;font-weight:800;font-size:1rem;letter-spacing:.02em;text-transform:uppercase;box-shadow:0 4px 0 var(--btnshadow);transition:transform .08s,box-shadow .08s}
 .btn:active:not(:disabled){transform:translateY(4px);box-shadow:0 0 0 var(--btnshadow)}
 .btn:disabled{opacity:.45;cursor:not-allowed}
 .btn.ghost{background:transparent;color:var(--btn);border:2px solid var(--btn);box-shadow:0 3px 0 var(--btn)}
 .btn.ghost:active{box-shadow:0 0 0 var(--btn)}
-.btn.link{background:none;color:var(--muted);padding:6px 0;text-decoration:underline;font-weight:400;box-shadow:none}
+.btn.link{background:none;color:var(--muted);padding:6px 0;text-decoration:underline;font-weight:400;box-shadow:none;text-transform:none;letter-spacing:0}
 .btn.link:active{transform:none}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .stack>*+*{margin-top:12px}
 :focus-visible{outline:3px solid var(--btn);outline-offset:2px}
 .top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:0 0 14px;padding:0 4px}
 .brand{font-weight:700;font-size:1.05rem}
-.level{font-family:"Caveat",cursive;font-size:2.6rem;line-height:1;color:var(--pen);font-weight:700}
+.level{font-family:var(--display);font-size:2.8rem;line-height:1;color:var(--gold);font-weight:bold}
 .opts{display:grid;gap:8px;margin:14px 0}
-.opt{text-align:left;background:var(--chip);color:var(--ink);border:2px solid var(--line);border-radius:10px;padding:11px 14px;font-size:1rem;box-shadow:0 3px 0 var(--line);transition:transform .08s,box-shadow .08s}
+.opt{text-align:left;background:var(--chip);color:var(--ink);border:2px solid var(--line);border-radius:0;padding:11px 14px;font-size:1rem;box-shadow:0 3px 0 var(--line);transition:transform .08s,box-shadow .08s}
 .opt:active:not(:disabled){transform:translateY(3px);box-shadow:0 0 0 var(--line)}
 .opt.sel{border-color:var(--btn);background:var(--soft);box-shadow:0 3px 0 var(--btn);animation:pop .22s ease-out}
 .opt.right{border-color:var(--ok);background:var(--okbg);box-shadow:0 3px 0 var(--ok);animation:bounce .5s ease-out}
@@ -70,7 +67,7 @@ input[type=text]:focus,textarea:focus{border-color:var(--btn);outline:none}
 .kind{font-size:.9rem;color:var(--muted);margin-bottom:2px}
 .progress{height:6px;background:var(--rule);border-radius:3px;overflow:hidden;margin:0 0 18px}
 .progress{height:14px;border-radius:7px}
-.progress>i{display:block;height:100%;background:var(--ok);border-radius:7px;transition:width .5s cubic-bezier(.3,1.4,.6,1);position:relative}
+.progress>i{display:block;height:100%;background:var(--gold);border-radius:7px;transition:width .5s cubic-bezier(.3,1.4,.6,1);position:relative}
 .progress>i::after{content:"";position:absolute;left:8px;right:8px;top:3px;height:3px;border-radius:2px;background:rgba(255,255,255,.45)}
 .fb{margin-top:16px;padding:14px 16px;border-radius:8px}
 .fb.good{background:var(--okbg)}
@@ -78,7 +75,7 @@ input[type=text]:focus,textarea:focus{border-color:var(--btn);outline:none}
 .fb p:last-child{margin-bottom:0}
 .chips{display:flex;flex-wrap:wrap;gap:8px;min-height:48px;padding:8px;border-radius:8px}
 .chips.answer{border:2px dashed var(--line);margin:10px 0}
-.chip{background:var(--chip);color:var(--ink);border:2px solid var(--line);border-radius:8px;padding:6px 11px;font-size:1rem;box-shadow:0 3px 0 var(--line)}
+.chip{background:var(--chip);color:var(--ink);border:2px solid var(--line);border-radius:0;padding:6px 11px;font-size:1rem;box-shadow:0 3px 0 var(--line)}
 .chip.new{animation:pop .25s ease-out}
 .chip.used{visibility:hidden}
 .ex{padding:10px 0;border-bottom:1px solid var(--rule)}
@@ -92,7 +89,7 @@ input[type=text]:focus,textarea:focus{border-color:var(--btn);outline:none}
 .corr{padding:10px 0;border-bottom:1px solid var(--rule)}
 .corr:last-child{border-bottom:0}
 .strike{text-decoration:line-through;text-decoration-color:var(--pen);text-decoration-thickness:2px}
-.score{font-family:"Caveat",cursive;font-size:4rem;line-height:1;color:var(--pen);font-weight:700}
+.score{font-family:var(--display);font-size:3.6rem;line-height:1;color:var(--pen);font-weight:bold}
 .score.ok{color:var(--ok)}
 .spinner{width:34px;height:34px;border:4px solid var(--rule);border-top-color:var(--btn);border-radius:50%;animation:spin 1s linear infinite;margin:10px 0 16px}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -102,7 +99,7 @@ input[type=text]:focus,textarea:focus{border-color:var(--btn);outline:none}
 .hud .combo{color:var(--pen)}
 .hud .xp{color:var(--ok)}
 .mute{background:none;border:0;font-size:1.2rem;padding:2px 6px}
-.xpgain{display:inline-block;font-family:"Caveat",cursive;font-size:1.6rem;font-weight:700;color:var(--ok);margin-left:10px;animation:rise .7s ease-out both}
+.xpgain{display:inline-block;font-family:var(--display);font-size:1.3rem;font-weight:bold;color:var(--ok);margin-left:10px;animation:rise .7s ease-out both}
 .combomsg{font-weight:700;color:var(--pen);margin:6px 0 0}
 .pulse{animation:pulse .45s ease-out}
 .shake{animation:shake .4s ease-in-out}
@@ -110,21 +107,21 @@ input[type=text]:focus,textarea:focus{border-color:var(--btn);outline:none}
 @keyframes pulse{0%{box-shadow:0 0 0 0 var(--ok)}100%{box-shadow:0 0 0 14px transparent}}
 @keyframes shake{0%,100%{transform:none}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
 .player{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;margin:0 0 14px;padding:0 4px}
-.player .lv{font-family:"Caveat",cursive;font-size:2rem;font-weight:700;line-height:1;color:var(--btn)}
+.player .lv{font-family:var(--display);font-size:1.7rem;font-weight:bold;line-height:1;color:var(--gold)}
 .player .title{font-size:.85rem;color:var(--muted)}
 .player .track{height:10px;background:var(--line);border-radius:5px;overflow:hidden;margin-top:4px}
 .player .track i{display:block;height:100%;background:var(--btn)}
 .flame{font-weight:700;font-size:1.1rem;white-space:nowrap}
 .stars{font-size:2.4rem;letter-spacing:4px;line-height:1}
-.stars .on{color:#E8A317}
+.stars .on{color:var(--gold)}
 .stars .off{color:var(--line)}
 .stars span{display:inline-block;animation:rise .5s ease-out both}
 .stars span:nth-child(2){animation-delay:.25s}
 .stars span:nth-child(3){animation-delay:.5s}
 .reward{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
-.reward div{background:var(--soft);border-radius:8px;padding:10px 4px}
+.reward div{background:var(--soft);border-radius:0;padding:10px 4px}
 .reward b{display:block;font-size:1.4rem}
-.levelup{background:var(--marker);color:var(--ink);border-radius:8px;padding:12px 14px;font-weight:700}
+.levelup{background:var(--gold);color:#120e02;border-radius:0;padding:12px 14px;font-weight:700}
 /* animações: mascote, painel de resposta, entrada de tela, confete */
 @keyframes pop{0%{transform:scale(.85)}60%{transform:scale(1.06)}100%{transform:none}}
 @keyframes bounce{0%{transform:none}30%{transform:translateY(-6px)}60%{transform:translateY(0)}80%{transform:translateY(-2px)}100%{transform:none}}
@@ -141,6 +138,10 @@ input[type=text]:focus,textarea:focus{border-color:var(--btn);outline:none}
 .mascot{display:block;flex:none;overflow:visible}
 .mascot .m-body{transform-box:fill-box;transform-origin:50% 100%}
 .mascot .m-eyes{transform-box:fill-box;transform-origin:center;animation:blink 4s infinite}
+.mascot .reel{transform-box:fill-box;transform-origin:center}
+.m-happy .reel,.m-cheer .reel{animation:reelspin .5s linear infinite}
+.m-idle .reel{animation:reelspin 3s linear infinite}
+@keyframes reelspin{to{transform:rotate(360deg)}}
 .m-idle .m-body{animation:breathe 2.6s ease-in-out infinite}
 .m-happy .m-body{animation:jump .6s ease-out 2}
 .m-cheer .m-body{animation:jump .7s ease-out infinite}
@@ -148,14 +149,15 @@ input[type=text]:focus,textarea:focus{border-color:var(--btn);outline:none}
 .talk{display:flex;align-items:flex-end;gap:10px;margin:0 0 12px}
 .bubble{position:relative;background:var(--soft);border:2px solid var(--line);border-radius:12px;padding:8px 12px;font-weight:700;animation:pop .3s ease-out}
 .bubble::before{content:"";position:absolute;left:-9px;bottom:12px;border:8px solid transparent;border-right-color:var(--line);border-left:0}
-.sheet{position:sticky;bottom:0;z-index:5;margin-top:12px;border-radius:14px 14px 6px 6px;padding:14px 18px 18px;animation:sheetup .3s cubic-bezier(.2,1.2,.4,1)}
+.sheet{position:sticky;bottom:0;z-index:5;margin-top:12px;border-radius:0;padding:14px 18px 18px;animation:sheetup .3s cubic-bezier(.2,1.2,.4,1)}
 .sheet.good{background:var(--okbg);border-top:4px solid var(--ok)}
 .sheet.bad{background:var(--penbg);border-top:4px solid var(--pen)}
 .sheet .inner{max-height:48vh;overflow:auto}
 .sheet p:last-child{margin-bottom:0}
 .sheet .btn{width:100%;margin-top:12px}
 .sheet.good .btn{background:var(--ok);box-shadow:0 4px 0 var(--okshadow)}
-.sheet.bad .btn{background:var(--pen);box-shadow:0 4px 0 var(--penshadow)}
+.sheet.bad .btn{background:var(--pen);color:#fff;box-shadow:0 4px 0 var(--penshadow)}
+.sheet .btn.link{background:none;box-shadow:none;color:var(--muted);margin-top:6px}
 .flame .f{display:inline-block;animation:flicker 1.2s ease-in-out infinite}
 .hud .combo{display:inline-block}
 .hud .combo.bump{animation:pop .35s ease-out}
@@ -167,35 +169,42 @@ input[type=text]:focus,textarea:focus{border-color:var(--btn);outline:none}
 .confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:20}
 /* mapa de fases */
 .world{display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
+.album{display:flex;gap:14px;align-items:center;margin:0 0 14px}
+.album img{width:84px;height:84px;object-fit:cover;flex:none;border:1px solid rgba(242,183,5,.35);box-shadow:0 8px 24px rgba(0,0,0,.6)}
+.album .an{font-family:var(--display);font-weight:bold;font-size:1.15rem;line-height:1.2;letter-spacing:.02em}
+.album .ay{color:var(--muted);font-size:.85rem}
 .map{position:relative;margin:18px 0 0}
-.map svg{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible}
+/* só o SVG do caminho (filho direto do mapa); sem o '>' a regra pegava também o mascote e o escondia */
+.map>svg{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible}
 .node{position:absolute;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;width:132px;background:none;border:0;padding:0;color:var(--ink)}
-.node .dot{--sh:var(--rule);width:66px;height:66px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.4rem;box-shadow:0 6px 0 var(--sh);transition:transform .08s,box-shadow .08s}
+.node .dot{--sh:#000;--lbl:#3a3a3a;width:68px;height:68px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.05rem;color:#120e02;box-shadow:0 6px 0 var(--sh);transition:transform .08s,box-shadow .08s;
+  background:radial-gradient(circle,var(--lbl) 0 29%,#0b0b0b 30% 33%,#1e1e1e 34% 36%,#0b0b0b 37% 44%,#1b1b1b 45% 47%,#0b0b0b 48% 57%,#1b1b1b 58% 60%,#0b0b0b 61% 100%);border:1px solid #2a2a2a}
 .node:active .dot{transform:translateY(5px);box-shadow:0 1px 0 var(--sh)}
-.node.done .dot{background:var(--ok);color:#fff;--sh:var(--okshadow)}
-.node.cur .dot{background:var(--btn);color:var(--btnink);--sh:var(--btnshadow);animation:nodepulse 1.8s ease-out infinite}
-.node.lock .dot{background:var(--line);color:var(--muted);--sh:var(--rule)}
-.node.boss .dot{width:84px;height:84px;border-radius:24px;font-size:2.1rem}
+.node.done .dot{--lbl:var(--gold)}
+.node.cur .dot{--lbl:var(--gold);border-color:var(--gold);animation:nodepulse 1.8s ease-out infinite}
+.node.lock .dot{--lbl:#2e2e2e;color:var(--muted);font-size:.9rem}
+.node.boss .dot{width:88px;height:88px;font-size:1.6rem;background:radial-gradient(circle,#0b0b0b 0 7%,transparent 8%),repeating-radial-gradient(circle,rgba(0,0,0,.18) 0 1px,transparent 1px 4px),conic-gradient(from 20deg,#f2b705,#ffe38a,#a87f00,#f2b705,#ffe38a,#a87f00,#f2b705);border-color:#8f6c00}
+.node.boss.lock .dot{filter:grayscale(1) brightness(.55)}
 .node .ns{font-size:.95rem;letter-spacing:2px;margin-top:9px;height:1.2em;line-height:1.2}
-.node .ns .on{color:#E8A317}.node .ns .off{color:var(--line)}
+.node .ns .on{color:var(--gold)}.node .ns .off{color:var(--line)}
 .node .nl{font-size:.8rem;line-height:1.25;color:var(--muted);margin-top:2px;max-width:128px}
 .node.cur .nl{color:var(--ink);font-weight:700}
-@keyframes nodepulse{0%{box-shadow:0 6px 0 var(--sh),0 0 0 0 var(--btn)}70%{box-shadow:0 6px 0 var(--sh),0 0 0 18px transparent}100%{box-shadow:0 6px 0 var(--sh),0 0 0 0 transparent}}
+@keyframes nodepulse{0%{box-shadow:0 6px 0 var(--sh),0 0 0 0 var(--gold)}70%{box-shadow:0 6px 0 var(--sh),0 0 0 18px transparent}100%{box-shadow:0 6px 0 var(--sh),0 0 0 0 transparent}}
 .mapmascot{position:absolute;display:flex;align-items:center;gap:4px;pointer-events:none}
 .mapmascot .bubble{font-size:.9rem;padding:5px 9px}
 .today{display:flex;align-items:center;gap:12px}
 .today .grow{flex:1}
 .scrim{position:fixed;inset:0;background:rgba(10,15,30,.5);z-index:30;animation:fadein .2s ease-out}
-.pop{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(680px,100%);background:var(--page);color:var(--ink);border-radius:18px 18px 0 0;padding:20px 22px 28px;z-index:31;animation:popup .3s cubic-bezier(.2,1.2,.4,1)}
+.pop{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(680px,100%);background:var(--page);color:var(--ink);border-radius:0;border-top:2px solid var(--gold);padding:20px 22px 28px;z-index:31;animation:popup .3s cubic-bezier(.2,1.2,.4,1)}
 .pop .stars{font-size:1.8rem}
 @keyframes popup{from{transform:translate(-50%,100%)}to{transform:translate(-50%,0)}}
 @keyframes fadein{from{opacity:0}to{opacity:1}}
-.unlock{background:var(--okbg);border:2px solid var(--ok);border-radius:10px;padding:12px 14px;font-weight:700;animation:pop .4s ease-out .7s both}
+.unlock{background:rgba(242,183,5,.1);border:2px solid var(--gold);color:var(--gold);border-radius:0;padding:12px 14px;font-weight:700;animation:pop .4s ease-out .7s both}
 @media (prefers-reduced-motion:reduce){.node.cur .dot,.pop,.scrim,.unlock{animation:none!important}}
 /* minijogo: pares */
 .pgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 4px}
 .pcol{display:grid;gap:10px;align-content:start}
-.pair{background:var(--chip);color:var(--ink);border:2px solid var(--line);border-radius:10px;padding:12px 8px;font-size:1rem;min-height:52px;box-shadow:0 3px 0 var(--line);transition:transform .08s,box-shadow .08s,opacity .3s,filter .3s}
+.pair{background:var(--chip);color:var(--ink);border:2px solid var(--line);border-radius:0;padding:12px 8px;font-size:1rem;min-height:52px;box-shadow:0 3px 0 var(--line);transition:transform .08s,box-shadow .08s,opacity .3s,filter .3s}
 .pair:active{transform:translateY(3px);box-shadow:0 0 0 var(--line)}
 .pair.sel{border-color:var(--btn);background:var(--soft);box-shadow:0 3px 0 var(--btn);animation:pop .2s ease-out}
 .pair.match{border-color:var(--ok);background:var(--okbg);box-shadow:0 3px 0 var(--ok);animation:pop .3s ease-out}
@@ -212,7 +221,7 @@ input[type=text]:focus,textarea:focus{border-color:var(--btn);outline:none}
 .lbar{height:12px;background:var(--rule);border-radius:6px;overflow:hidden;margin:4px 0 18px}
 .lbar>i{display:block;height:100%;width:100%;background:var(--pen);border-radius:6px}
 .lbar.run>i{animation:shrink linear forwards}
-.lcard{min-height:130px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:1.35rem;font-weight:700;line-height:1.35;padding:20px;border-radius:14px;background:var(--soft);border:2px solid var(--line)}
+.lcard{min-height:130px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:1.35rem;font-weight:700;line-height:1.35;padding:20px;border-radius:0;background:var(--soft);border:2px solid var(--line)}
 .lcard.in{animation:cardin .22s ease-out}
 .lcard.hit{border-color:var(--ok);background:var(--okbg);animation:flyok .22s ease-in forwards}
 .lcard.miss{border-color:var(--pen);background:var(--penbg);animation:flybad .22s ease-in forwards}
@@ -226,18 +235,19 @@ input[type=text]:focus,textarea:focus{border-color:var(--btn);outline:none}
 @media (prefers-reduced-motion:reduce){
   .pair,.lcard{animation:none!important}
   .xpgain,.pulse,.shake,.stars span,.enter,.sheet,.bubble,.opt,.chip.new,.reward div,.corr,.levelup,.hud .combo.bump,
-  .mascot .m-eyes,.m-idle .m-body,.m-happy .m-body,.m-cheer .m-body,.m-sad .m-body,.flame .f{animation:none!important}
+  .mascot .m-eyes,.mascot .reel,.m-idle .m-body,.m-happy .m-body,.m-cheer .m-body,.m-sad .m-body,.flame .f{animation:none!important}
   .progress>i{transition:none}
 }
 .foot{margin-top:16px;padding:0 4px;font-size:.85rem;color:var(--muted)}
 @media (max-width:480px){
-  .page{padding:22px 16px 24px 38px;background-image:linear-gradient(to right,transparent 22px,var(--margin) 22px,var(--margin) 24px,transparent 24px)}
+  .page{padding:20px 16px 22px}
   h1{font-size:1.5rem}
   .bar{grid-template-columns:90px 1fr 40px}
 }
 </style>
 </head>
 <body>
+<header class="topbar"><span class="brand-mark">013</span><a class="brand-text" href="./">CBJR ENGLISH</a></header>
 <div id="errbar" hidden></div>
 <div class="wrap">
   <div id="app"></div>
@@ -253,6 +263,14 @@ window.addEventListener('unhandledrejection',e=>{const r=e.reason;showError((r&&
 /* ---------- conteúdo fixo: níveis, teste de nível e programa ---------- */
 const LEVELS=['A1','A2','B1','B2','C1'];
 const LEVEL_NAME={A1:'Iniciante',A2:'Básico',B1:'Intermediário',B2:'Intermediário avançado',C1:'Avançado'};
+// Cada mundo leva o nome e a capa de um álbum, na ordem da discografia (capas em assets/capas).
+const WORLD_ALBUM={
+  A1:{name:'Transpiração Contínua Prolongada',year:1997,cover:'assets/capas/cd1.jpeg'},
+  A2:{name:'Preço Curto... Prazo Longo',year:1999,cover:'assets/capas/cd2.jpeg'},
+  B1:{name:'Nadando com os Tubarões',year:2000,cover:'assets/capas/cd3.jpeg'},
+  B2:{name:'100% Charlie Brown Jr. Abalando a Sua Fábrica',year:2001,cover:'assets/capas/cd4.jpeg'},
+  C1:{name:'Bocas Ordinárias',year:2002,cover:'assets/capas/cd5.jpeg'}
+};
 
 // Banco do teste de nível: 6 questões por faixa; a opção correta é sempre a primeira (embaralhada na exibição).
 const PLACE=[
@@ -399,27 +417,28 @@ function sfx(kind){
 function mascot(mood,size){
   size=size||64;
   const happy=mood==='happy'||mood==='cheer';
-  const eyes=happy
-    ?'<path d="M34 52 Q40 44 46 52" stroke="var(--ink)" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M54 52 Q60 44 66 52" stroke="var(--ink)" stroke-width="3.5" fill="none" stroke-linecap="round"/>'
-    :'<ellipse cx="40" cy="50" rx="4.5" ry="6" fill="var(--ink)"/><ellipse cx="60" cy="50" rx="4.5" ry="6" fill="var(--ink)"/><circle cx="41.5" cy="47.5" r="1.6" fill="var(--page)"/><circle cx="61.5" cy="47.5" r="1.6" fill="var(--page)"/>';
-  const mouth=happy?'<path d="M40 62 Q50 75 60 62 Z" fill="var(--pen)"/>'
-    :mood==='sad'?'<path d="M42 70 Q50 62 58 70" stroke="var(--ink)" stroke-width="3.5" fill="none" stroke-linecap="round"/>'
-    :'<path d="M43 65 Q50 70 57 65" stroke="var(--ink)" stroke-width="3.5" fill="none" stroke-linecap="round"/>';
-  const brows=mood==='sad'?'<path d="M34 41 L45 44" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/><path d="M66 41 L55 44" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>':'';
-  const cheeks=happy?'<circle cx="32" cy="60" r="4.5" fill="var(--margin)" opacity=".45"/><circle cx="68" cy="60" r="4.5" fill="var(--margin)" opacity=".45"/>':'';
+  // Os carretéis são os olhos: giram quando você acerta, param quando você erra.
+  const reel=cx=>`<g class="reel"><circle cx="${cx}" cy="57" r="8.5" fill="#f3f1ec"/><circle cx="${cx}" cy="57" r="3" fill="#141414"/>${[0,60,120].map(a=>`<rect x="${cx-1}" y="49.5" width="2" height="15" fill="#141414" transform="rotate(${a} ${cx} 57)"/>`).join('')}</g>`;
+  const mouth=happy?'<path d="M42 72 Q50 81 58 72 Z" fill="#e74c3c"/>'
+    :mood==='sad'?'<path d="M43 78 Q50 71 57 78" stroke="#f3f1ec" stroke-width="3" fill="none" stroke-linecap="round"/>'
+    :'<path d="M44 74 Q50 78 56 74" stroke="#f3f1ec" stroke-width="3" fill="none" stroke-linecap="round"/>';
+  const brows=mood==='sad'?'<path d="M29 43 L41 46" stroke="#f3f1ec" stroke-width="3" stroke-linecap="round"/><path d="M71 43 L59 46" stroke="#f3f1ec" stroke-width="3" stroke-linecap="round"/>':'';
   return `<svg class="mascot m-${mood}" viewBox="0 0 100 100" width="${size}" height="${size}" aria-hidden="true">
-    <ellipse cx="50" cy="95" rx="24" ry="4" fill="var(--line)"/>
+    <ellipse cx="50" cy="95" rx="30" ry="4" fill="#000" opacity=".6"/>
     <g class="m-body">
-      <rect x="18" y="22" width="64" height="70" rx="14" fill="var(--btn)"/>
-      <rect x="25" y="30" width="50" height="54" rx="8" fill="var(--page)"/>
-      ${[30,42,54,66].map(x=>`<rect x="${x}" y="13" width="6" height="18" rx="3" fill="var(--muted)"/>`).join('')}
-      <g class="m-eyes">${eyes}</g>${brows}${cheeks}${mouth}
+      <rect x="8" y="20" width="84" height="66" rx="7" fill="#1c1c1c" stroke="#f2b705" stroke-width="2.5"/>
+      <rect x="15" y="26" width="70" height="14" fill="#f2b705"/>
+      <text x="50" y="37" text-anchor="middle" font-family="Elektrix,Impact,Arial Black,sans-serif" font-size="10" font-weight="bold" fill="#120e02">013</text>
+      <rect x="24" y="46" width="52" height="22" rx="11" fill="#0a0a0a"/>
+      <g class="m-eyes">${reel(38)}${reel(62)}</g>
+      <path d="M26 86 L32 74 L68 74 L74 86 Z" fill="#141414" stroke="#f2b705" stroke-width="2"/>
+      ${brows}${mouth}
     </g>
   </svg>`;
 }
 const PHRASES={
-  ok:['Mandou bem!','Isso aí!','Perfeito!','Acertou em cheio!','Boa!'],
-  combo:['Tá voando!','Ninguém te segura!','Sequência de respeito!','Combo! Continua assim!'],
+  ok:['Mandou bem!','Isso aí!','Na atividade!','Acertou em cheio!','Boa, 013!'],
+  combo:['Tá voando!','Ninguém te segura!','Sequência de respeito!','Tamo aí na atividade!'],
   bad:['Quase! Olha a correção.','Errar faz parte. Bora!','Esse volta na revisão, relaxa.','Anota essa e segue!']
 };
 function phrase(k){const a=PHRASES[k];return a[Math.floor(Math.random()*a.length)];}
@@ -430,7 +449,7 @@ function confetti(){
   const dpr=window.devicePixelRatio||1,W=innerWidth,H=innerHeight;
   c.width=W*dpr;c.height=H*dpr;const ctx=c.getContext('2d');ctx.scale(dpr,dpr);
   const cs=getComputedStyle(document.documentElement);
-  const cols=['--btn','--ok','--pen','--marker','--margin'].map(v=>cs.getPropertyValue(v).trim()||'#888');
+  const cols=['--gold','--ok','--pen','--ink','--gold'].map(v=>cs.getPropertyValue(v).trim()||'#888');
   const ps=Array.from({length:150},()=>({x:W/2+(Math.random()-.5)*100,y:H*.3,vx:(Math.random()-.5)*14,vy:-Math.random()*14-4,s:6+Math.random()*6,r:Math.random()*6,vr:(Math.random()-.5)*.35,c:cols[Math.floor(Math.random()*cols.length)]}));
   const t0=performance.now();
   (function frame(t){
@@ -506,7 +525,7 @@ function renderFoot(){document.getElementById('foot').textContent=syncLabel;}
 /* ---------- telas: boas-vindas e teste de nível ---------- */
 function vWelcome(){
   return `<div class="page stack">
-    <h1>Seu caderno de inglês</h1>
+    <h1>Aprenda inglês no ritmo do 013</h1>
     <p>Primeiro um teste curto, de até 12 questões, para descobrir o seu nível. Depois, um mapa de fases do seu nível: cada fase tem uma dica rápida em português, exercícios de produção (você escreve, não só clica), ditado com áudio, minijogos e um texto curto no final.</p>
     <p>O que você errar volta nos dias seguintes, em intervalos cada vez maiores, até fixar. A próxima fase só abre quando você acerta pelo menos 70% da atual.</p>
     <div class="row"><button class="btn" data-act="startPlacement">Fazer o teste de nível</button></div>
@@ -552,6 +571,7 @@ function vPlaceResult(){
     <div class="kind">Resultado</div>
     <div class="level">${L}</div>
     <h1>${esc(LEVEL_NAME[L])}</h1>
+    ${WORLD_ALBUM[L]?`<div class="album" style="margin-top:6px"><img src="${WORLD_ALBUM[L].cover}" alt="" onerror="this.remove()"><div><div class="kind">Seu primeiro mundo</div><div class="an">${esc(WORLD_ALBUM[L].name)}</div><div class="ay">${WORLD_ALBUM[L].year}</div></div></div>`:''}
     <p>${below?`Você domina a base de ${below}. `:''}Suas aulas vão trabalhar o conteúdo de <strong>${L}</strong>, começando por: <strong>${esc(SYL[L][0][1])}</strong>.</p>
     <p class="muted">O programa do ${L} tem ${SYL[L].length} tópicos. Quando você passar por todos com média de 80% ou mais nas últimas 5 aulas, o caderno oferece subir para o próximo nível.</p>
     <div class="row"><button class="btn" data-act="goHome">Ir para o caderno</button></div>
@@ -586,8 +606,8 @@ function vMap(m){
     const soon=boss?m.avail<m.n:i>=m.avail;
     if(soon&&state!=='done')state='lock soon';
     const stars=boss?m.bossStars:(m.st[i]||0);
-    const icon=state==='lock soon'?'⏳':boss?'🏆':state==='lock'?'🔒':state==='done'?'✓':String(i+1);
-    const label=boss?'Chefão do mundo':m.list[i][1];
+    const icon=state==='lock soon'?'⏳':boss?'':state==='lock'?'🔒':state==='done'?'✓':String(i+1);
+    const label=boss?'Disco de ouro (chefão)':m.list[i][1];
     nodes.push(`<button class="node ${state} ${boss?'boss':''}" ${state==='cur'?'id="curnode"':''} style="left:${p.x/W*100}%;top:${p.y-33}px" data-act="mapTap" data-arg="${i}" aria-label="${esc((boss?'Chefão':'Fase '+(i+1))+': '+label)}">
       <span class="dot">${icon}</span><span class="ns">${state==='done'||stars?starRow(stars):''}</span><span class="nl">${esc(label)}</span></button>`);
     if(state==='cur'){
@@ -598,7 +618,7 @@ function vMap(m){
   return `<div class="map" style="height:${H}px">
     <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">
       <path d="${full}" fill="none" stroke="var(--line)" stroke-width="10" stroke-linecap="round" stroke-dasharray="2 18" vector-effect="non-scaling-stroke"/>
-      <path d="${done}" fill="none" stroke="var(--ok)" stroke-width="10" stroke-linecap="round" stroke-dasharray="2 18" vector-effect="non-scaling-stroke"/>
+      <path d="${done}" fill="none" stroke="var(--gold)" stroke-width="10" stroke-linecap="round" stroke-dasharray="2 18" vector-effect="non-scaling-stroke"/>
     </svg>
     ${nodes.join('')}
   </div>`;
@@ -617,8 +637,8 @@ function vPop(m){
     body=boss?`<p>O chefão abre quando você completar todas as ${m.n} fases do mundo ${m.L}. Faltam ${m.n-m.cur}.</p>`
              :`<p>Complete a fase ${m.cur+1} para liberar esta.</p>`;
   }else if(boss){
-    body=`<p>Prova final do mundo ${m.L}, misturando todas as fases. Faça <strong>80% ou mais</strong> para derrotar o chefão e abrir o mundo ${LEVELS[LEVELS.indexOf(m.L)+1]||'seguinte'}.</p>${stars?`<div class="stars">${starRow(stars)}</div>`:''}`;
-    btn=`<button class="btn" data-act="playPhase" data-arg="${i}">${stars?'Enfrentar de novo':'Enfrentar o chefão'}</button>`;
+    body=`<p>Prova final do mundo ${m.L}, misturando todas as fases. Faça <strong>80% ou mais</strong> para conquistar o disco de ouro e abrir o mundo ${LEVELS[LEVELS.indexOf(m.L)+1]||'seguinte'}.</p>${stars?`<div class="stars">${starRow(stars)}</div>`:''}`;
+    btn=`<button class="btn" data-act="playPhase" data-arg="${i}">${stars?'Tentar de novo':'Valendo o disco de ouro'}</button>`;
   }else{
     const doneP=i<m.cur;
     body=`${doneP?`<div class="stars">${starRow(stars)}</div><p>${stars===3?'Fase gabaritada!':'Jogue de novo para conquistar '+(stars?'mais estrelas':'as estrelas')+'. Três estrelas pedem 90% de acertos.'}</p>`
@@ -663,9 +683,10 @@ function vHome(){
   </div>`;})()}
   <div class="page">${todayBox}</div>
   <div class="page">
+    ${WORLD_ALBUM[m.L]?`<div class="album"><img src="${WORLD_ALBUM[m.L].cover}" alt="Capa do álbum ${esc(WORLD_ALBUM[m.L].name)}" onerror="this.remove()"><div><div class="kind">Mundo ${m.L}</div><div class="an">${esc(WORLD_ALBUM[m.L].name)}</div><div class="ay">${WORLD_ALBUM[m.L].year}</div></div></div>`:''}
     <div class="world">
-      <div><div class="kind">Mundo</div><div class="level">${m.L}</div><div class="muted small">${esc(LEVEL_NAME[m.L])}${S.champion&&m.L==='C1'?'. Campeão!':''}</div></div>
-      <div class="muted small" style="text-align:right">${m.cur} de ${m.n} fases<br><span style="color:#E8A317">★</span> ${totalStars} de ${(m.n+1)*3}</div>
+      <div>${WORLD_ALBUM[m.L]?'':'<div class="kind">Mundo</div>'}<div class="level">${m.L}</div><div class="muted small">${esc(LEVEL_NAME[m.L])}${S.champion&&m.L==='C1'?'. Campeão!':''}</div></div>
+      <div class="muted small" style="text-align:right">${m.cur} de ${m.n} fases<br><span style="color:var(--gold)">★</span> ${totalStars} de ${(m.n+1)*3}</div>
     </div>
     <div class="progress" style="margin-top:12px"><i style="width:${m.cur/m.n*100}%"></i></div>
     ${vMap(m)}
