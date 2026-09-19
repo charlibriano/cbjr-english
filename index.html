@@ -26,6 +26,26 @@ html,body{margin:0}
 body{background:var(--bg) radial-gradient(ellipse 90% 40% at 50% 0%,rgba(242,183,5,.06),transparent 60%) no-repeat fixed;color:var(--ink);font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
 .topbar{position:sticky;top:0;z-index:9;display:flex;align-items:center;gap:10px;height:52px;padding:0 16px;background:rgba(8,8,8,.92);border-bottom:1px solid rgba(242,183,5,.18);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 .brand-mark{width:32px;height:32px;display:grid;place-items:center;background:var(--gold);color:#120e02;font-weight:900;font-size:.8rem;box-shadow:0 0 18px rgba(242,183,5,.28)}
+.radio{margin-left:auto;display:flex;align-items:center;gap:6px}
+.pl-cover{width:34px;height:34px;padding:0;border:1px solid rgba(242,183,5,.4);background:#1b1b1b;display:grid;place-items:center;overflow:hidden;color:var(--gold);font-size:1rem}
+.pl-cover img{width:100%;height:100%;object-fit:cover;display:block}
+.pl-title{max-width:230px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.85rem;color:var(--muted);margin:0 4px}
+.pl-btn{width:34px;height:34px;display:grid;place-items:center;padding:0;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:var(--ink)}
+.pl-btn svg{width:16px;height:16px;fill:currentColor}
+.pl-btn.main{background:var(--gold);color:#120e02;border-color:var(--gold)}
+.pl-btn:hover,.pl-cover:hover{border-color:var(--gold)}
+.pl-panel{position:fixed;top:52px;right:0;z-index:20;width:min(380px,100vw);max-height:calc(100vh - 60px);overflow:auto;background:#0e0e0e;border:1px solid rgba(242,183,5,.3);border-top:0;padding:16px;box-shadow:0 20px 60px rgba(0,0,0,.7);animation:fadein .15s ease-out}
+.pl-now{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+.pl-now img{width:64px;height:64px;object-fit:cover;border:1px solid rgba(242,183,5,.35)}
+.pl-song{font-family:var(--display);font-weight:bold;color:var(--gold);font-size:1.05rem;line-height:1.2}
+.pl-row{display:flex;align-items:center;gap:10px;margin:8px 0;font-size:.95rem}
+.pl-row input[type=range]{flex:1;accent-color:#f2b705}
+.pl-row input[type=checkbox]{accent-color:#f2b705;width:18px;height:18px}
+.pl-albums{display:grid;gap:6px;margin-top:6px}
+.pl-al{text-align:left;background:#161616;color:var(--ink);border:1px solid rgba(255,255,255,.08);padding:9px 12px;font-size:.92rem}
+.pl-al small{color:var(--muted)}
+.pl-al.on{border-color:var(--gold);color:var(--gold)}
+@media (max-width:560px){.pl-title{display:none}.brand-text{font-size:1.05rem}}
 .brand-text{font-family:var(--display);color:var(--gold);font-size:1.3rem;line-height:1;letter-spacing:.03em;text-decoration:none}
 #errbar{position:sticky;top:52px;z-index:10;background:var(--pen);color:#fff;padding:10px 16px;font-size:15px}
 .wrap{max-width:680px;margin:0 auto;padding:20px 14px 60px}
@@ -245,9 +265,20 @@ input[type=text]:focus,textarea:focus{border-color:var(--btn);outline:none}
   .bar{grid-template-columns:90px 1fr 40px}
 }
 </style>
+<script src="assets/radio.js"></script>
 </head>
 <body>
-<header class="topbar"><span class="brand-mark">013</span><a class="brand-text" href="./">CBJR ENGLISH</a></header>
+<header class="topbar"><span class="brand-mark">013</span><a class="brand-text" href="./">CBJR ENGLISH</a>
+  <div class="radio" id="radio" hidden>
+    <button class="pl-cover" id="plOpen" aria-label="Abrir a Rádio 013" aria-expanded="false">🎵</button>
+    <span class="pl-title" id="plTitle">Rádio 013</span>
+    <button class="pl-btn" id="plPrev" aria-label="Música anterior"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
+    <button class="pl-btn main" id="plPlay" aria-label="Tocar"><svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg></button>
+    <button class="pl-btn" id="plNext" aria-label="Próxima música"><svg viewBox="0 0 24 24"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg></button>
+  </div>
+</header>
+<div class="pl-panel" id="plPanel" hidden></div>
+<audio id="plAudio" preload="none"></audio>
 <div id="errbar" hidden></div>
 <div class="wrap">
   <div id="app"></div>
@@ -350,6 +381,7 @@ function speak(text,rate){
   try{
     speechSynthesis.cancel();
     const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=rate||1;
+    u.onstart=()=>radioDuck(true);u.onend=u.onerror=()=>radioDuck(false);
     const vs=speechSynthesis.getVoices();
     const v=vs.find(v=>/^en[-_]US/i.test(v.lang))||vs.find(v=>/^en/i.test(v.lang));
     if(v)u.voice=v;
@@ -1218,6 +1250,120 @@ app.addEventListener('keydown',e=>{
   e.preventDefault();
   if(!X.checked&&!X.busy)check();
 });
+
+/* ---------- Rádio 013: músicas do Quiz CBJR V2 enquanto joga ---------- */
+// Os MP3 ficam no repositório do Quiz; aqui só se aponta para eles. Se um endereço
+// falhar, tenta o próximo (GitHub Pages do Quiz, Vercel, arquivo direto do GitHub).
+const RADIO_BASES=['https://charlibriano.github.io/Quiz-CBJR-V2/','https://cbjr013.vercel.app/','https://raw.githubusercontent.com/charlibriano/Quiz-CBJR-V2/main/'];
+const RADIO_KEY='cbjr-english-radio';
+const WORLD_DISC={A1:0,A2:1,B1:2,B2:3,C1:4};
+const R=window.RADIO013||null;
+let RS={album:'world',shuffle:false,vol:.5,base:0};
+try{Object.assign(RS,JSON.parse(localStorage.getItem(RADIO_KEY)||'{}'));}catch(e){}
+let rQueue=[],rQi=0,rFails=0,rDuck=false;
+const plAudio=document.getElementById('plAudio');
+function radioSave(){try{localStorage.setItem(RADIO_KEY,JSON.stringify(RS));}catch(e){}}
+function radioDuck(on){rDuck=on;if(plAudio)plAudio.volume=on?Math.min(RS.vol,.08):RS.vol;}
+function radioAlbumIdx(){return RS.album==='world'?(WORLD_DISC[S.level]!=null?WORLD_DISC[S.level]:0):RS.album;}
+function radioCover(ai){return ai<5?'assets/capas/cd'+(ai+1)+'.jpeg':RADIO_BASES[RS.base]+R[ai].c;}
+function radioBuild(){
+  const al=radioAlbumIdx();
+  let q=al==='all'?R.flatMap((a,ai)=>a.t.map((_,ti)=>[ai,ti])):R[al].t.map((_,ti)=>[al,ti]);
+  if(RS.shuffle||al==='all')q=shuffle(q);
+  rQueue=q;rQi=0;
+}
+function radioLoad(){
+  const [ai,ti]=rQueue[rQi];
+  plAudio.src=RADIO_BASES[RS.base]+R[ai].t[ti].u.replace(/^\.\//,'');
+  plAudio.volume=rDuck?Math.min(RS.vol,.08):RS.vol;
+  radioUI();
+}
+function radioPlay(){
+  if(!rQueue.length)radioBuild();
+  if(!plAudio.getAttribute('src'))radioLoad();
+  const p=plAudio.play();
+  if(p&&p.catch)p.catch(e=>{if(e&&!['AbortError','NotAllowedError','NotSupportedError'].includes(e.name))showError('A rádio não conseguiu tocar: '+e.message);});
+}
+function radioStep(d){
+  if(!rQueue.length)radioBuild();
+  if(d<0&&plAudio.currentTime>3){plAudio.currentTime=0;return;}
+  rQi=(rQi+d+rQueue.length)%rQueue.length;
+  radioLoad();radioPlay();
+}
+function radioChoose(al){
+  RS.album=al==='world'||al==='all'?al:+al;radioSave();
+  radioBuild();radioLoad();radioPlay();radioPanel(true);
+}
+function radioUI(){
+  const btn=document.getElementById('plPlay'),on=!plAudio.paused;
+  document.getElementById('radio').classList.toggle('on',on);
+  btn.innerHTML=on?'<svg viewBox="0 0 24 24"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>':'<svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg>';
+  btn.setAttribute('aria-label',on?'Pausar':'Tocar');
+  const cur=rQueue[rQi];
+  if(!cur)return;
+  const [ai,ti]=cur,a=R[ai],t=a.t[ti];
+  document.getElementById('plTitle').textContent=t.n;
+  const cv=document.getElementById('plOpen');
+  cv.innerHTML=`<img src="${radioCover(ai)}" alt="" onerror="this.replaceWith(document.createTextNode('🎵'))">`;
+  if('mediaSession' in navigator&&window.MediaMetadata){
+    try{navigator.mediaSession.metadata=new MediaMetadata({title:t.n,artist:'Charlie Brown Jr.',album:a.a,artwork:[{src:new URL(radioCover(ai),location.href).href}]});}catch(e){}
+  }
+  if(!document.getElementById('plPanel').hidden)radioPanel(true);
+}
+function radioPanel(show){
+  const pn=document.getElementById('plPanel');
+  document.getElementById('plOpen').setAttribute('aria-expanded',show?'true':'false');
+  if(!show){pn.hidden=true;return;}
+  const cur=rQueue[rQi],al=RS.album;
+  const wi=WORLD_DISC[S.level]!=null?WORLD_DISC[S.level]:0;
+  pn.innerHTML=`
+    <div class="pl-now">${cur?`<img src="${radioCover(cur[0])}" alt="" onerror="this.remove()">`:''}
+      <div><div class="kind">Rádio 013</div><div class="pl-song">${cur?esc(R[cur[0]].t[cur[1]].n):'Escolha um disco e dê o play'}</div><div class="muted small">${cur?esc(R[cur[0]].a)+' ('+R[cur[0]].y+')':''}</div></div></div>
+    <label class="pl-row">Volume <input type="range" id="plVol" min="0" max="1" step="0.05" value="${RS.vol}"></label>
+    <label class="pl-row"><input type="checkbox" id="plShuf" ${RS.shuffle?'checked':''}> Ordem aleatória</label>
+    <p class="muted small" style="margin:4px 0 8px">A música abaixa sozinha quando o jogo fala uma frase em inglês.</p>
+    <div class="kind">Escolha o disco</div>
+    <div class="pl-albums">
+      <button class="pl-al ${al==='world'?'on':''}" data-al="world">Disco do seu mundo <small>(${esc(R[wi].a)})</small></button>
+      ${R.map((a,i)=>`<button class="pl-al ${al===i?'on':''}" data-al="${i}">${esc(a.a)} <small>${a.y}</small></button>`).join('')}
+      <button class="pl-al ${al==='all'?'on':''}" data-al="all">Todos os discos, misturados</button>
+    </div>`;
+  pn.hidden=false;
+}
+if(R&&R.length&&plAudio){
+  document.getElementById('radio').hidden=false;
+  document.getElementById('plPlay').addEventListener('click',()=>{plAudio.paused?radioPlay():plAudio.pause();});
+  document.getElementById('plNext').addEventListener('click',()=>radioStep(1));
+  document.getElementById('plPrev').addEventListener('click',()=>radioStep(-1));
+  document.getElementById('plOpen').addEventListener('click',e=>{e.stopPropagation();radioPanel(document.getElementById('plPanel').hidden);});
+  const pn=document.getElementById('plPanel');
+  pn.addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('[data-al]');if(b)radioChoose(b.dataset.al);});
+  pn.addEventListener('input',e=>{
+    if(e.target.id==='plVol'){RS.vol=+e.target.value;radioSave();if(!rDuck)plAudio.volume=RS.vol;}
+    if(e.target.id==='plShuf'){RS.shuffle=e.target.checked;radioSave();const cur=rQueue[rQi];radioBuild();if(cur){const k=rQueue.findIndex(x=>x[0]===cur[0]&&x[1]===cur[1]);if(k>=0){rQueue.splice(k,1);rQueue.unshift(cur);}}rQi=0;}
+  });
+  document.addEventListener('click',()=>{if(!pn.hidden)radioPanel(false);});
+  plAudio.addEventListener('play',radioUI);
+  plAudio.addEventListener('pause',radioUI);
+  plAudio.addEventListener('playing',()=>{rFails=0;});
+  plAudio.addEventListener('ended',()=>radioStep(1));
+  plAudio.addEventListener('error',()=>{
+    if(!plAudio.getAttribute('src'))return;
+    if(RS.base<RADIO_BASES.length-1){RS.base++;radioSave();radioLoad();radioPlay();return;}
+    rFails++;
+    if(rFails<3){radioStep(1);return;}
+    plAudio.pause();
+    showError('A rádio não conseguiu carregar as músicas do Quiz CBJR. Testei o GitHub Pages do Quiz, a Vercel e o arquivo direto no GitHub.');
+  });
+  if('mediaSession' in navigator){
+    try{
+      navigator.mediaSession.setActionHandler('play',radioPlay);
+      navigator.mediaSession.setActionHandler('pause',()=>plAudio.pause());
+      navigator.mediaSession.setActionHandler('nexttrack',()=>radioStep(1));
+      navigator.mediaSession.setActionHandler('previoustrack',()=>radioStep(-1));
+    }catch(e){}
+  }
+}
 
 /* ---------- início ---------- */
 loadLocal();
