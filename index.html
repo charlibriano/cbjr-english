@@ -1260,16 +1260,17 @@ const WORLD_DISC={A1:0,A2:1,B1:2,B2:3,C1:4};
 const R=window.RADIO013||null;
 let RS={album:'world',shuffle:false,vol:.5,base:0};
 try{Object.assign(RS,JSON.parse(localStorage.getItem(RADIO_KEY)||'{}'));}catch(e){}
+if(RS.album==='all'){RS.album='world';RS.shuffle=true;}  // opção antiga "todos os discos" virou o próprio aleatório
 let rQueue=[],rQi=0,rFails=0,rDuck=false;
 const plAudio=document.getElementById('plAudio');
 function radioSave(){try{localStorage.setItem(RADIO_KEY,JSON.stringify(RS));}catch(e){}}
 function radioDuck(on){rDuck=on;if(plAudio)plAudio.volume=on?Math.min(RS.vol,.08):RS.vol;}
-function radioAlbumIdx(){return RS.album==='world'?(WORLD_DISC[S.level]!=null?WORLD_DISC[S.level]:0):RS.album;}
+function radioAlbumIdx(){if(RS.shuffle)return 'all';return RS.album==='world'?(WORLD_DISC[S.level]!=null?WORLD_DISC[S.level]:0):RS.album;}
 function radioCover(ai){return ai<5?'assets/capas/cd'+(ai+1)+'.jpeg':RADIO_BASES[RS.base]+R[ai].c;}
 function radioBuild(){
   const al=radioAlbumIdx();
   let q=al==='all'?R.flatMap((a,ai)=>a.t.map((_,ti)=>[ai,ti])):R[al].t.map((_,ti)=>[al,ti]);
-  if(RS.shuffle||al==='all')q=shuffle(q);
+  if(al==='all')q=shuffle(q);
   rQueue=q;rQi=0;
 }
 function radioLoad(){
@@ -1291,7 +1292,8 @@ function radioStep(d){
   radioLoad();radioPlay();
 }
 function radioChoose(al){
-  RS.album=al==='world'||al==='all'?al:+al;radioSave();
+  // escolher um disco toca ele na ordem e desliga o aleatório
+  RS.album=al==='world'?al:+al;RS.shuffle=false;radioSave();
   radioBuild();radioLoad();radioPlay();radioPanel(true);
 }
 function radioUI(){
@@ -1320,13 +1322,12 @@ function radioPanel(show){
     <div class="pl-now">${cur?`<img src="${radioCover(cur[0])}" alt="" onerror="this.remove()">`:''}
       <div><div class="kind">Rádio 013</div><div class="pl-song">${cur?esc(R[cur[0]].t[cur[1]].n):'Escolha um disco e dê o play'}</div><div class="muted small">${cur?esc(R[cur[0]].a)+' ('+R[cur[0]].y+')':''}</div></div></div>
     <label class="pl-row">Volume <input type="range" id="plVol" min="0" max="1" step="0.05" value="${RS.vol}"></label>
-    <label class="pl-row"><input type="checkbox" id="plShuf" ${RS.shuffle?'checked':''}> Ordem aleatória</label>
+    <label class="pl-row"><input type="checkbox" id="plShuf" ${RS.shuffle?'checked':''}> Aleatório em todos os discos</label>
     <p class="muted small" style="margin:4px 0 8px">A música abaixa sozinha quando o jogo fala uma frase em inglês.</p>
     <div class="kind">Escolha o disco</div>
     <div class="pl-albums">
-      <button class="pl-al ${al==='world'?'on':''}" data-al="world">Disco do seu mundo <small>(${esc(R[wi].a)})</small></button>
-      ${R.map((a,i)=>`<button class="pl-al ${al===i?'on':''}" data-al="${i}">${esc(a.a)} <small>${a.y}</small></button>`).join('')}
-      <button class="pl-al ${al==='all'?'on':''}" data-al="all">Todos os discos, misturados</button>
+      <button class="pl-al ${!RS.shuffle&&al==='world'?'on':''}" data-al="world">Disco do seu mundo <small>(${esc(R[wi].a)})</small></button>
+      ${R.map((a,i)=>`<button class="pl-al ${!RS.shuffle&&al===i?'on':''}" data-al="${i}">${esc(a.a)} <small>${a.y}</small></button>`).join('')}
     </div>`;
   pn.hidden=false;
 }
@@ -1340,7 +1341,13 @@ if(R&&R.length&&plAudio){
   pn.addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('[data-al]');if(b)radioChoose(b.dataset.al);});
   pn.addEventListener('input',e=>{
     if(e.target.id==='plVol'){RS.vol=+e.target.value;radioSave();if(!rDuck)plAudio.volume=RS.vol;}
-    if(e.target.id==='plShuf'){RS.shuffle=e.target.checked;radioSave();const cur=rQueue[rQi];radioBuild();if(cur){const k=rQueue.findIndex(x=>x[0]===cur[0]&&x[1]===cur[1]);if(k>=0){rQueue.splice(k,1);rQueue.unshift(cur);}}rQi=0;}
+    if(e.target.id==='plShuf'){
+      // a música atual continua tocando; a fila seguinte é que muda
+      RS.shuffle=e.target.checked;radioSave();
+      const cur=rQueue[rQi];radioBuild();
+      if(cur){const k=rQueue.findIndex(x=>x[0]===cur[0]&&x[1]===cur[1]);if(k>=0)rQi=k;if(RS.shuffle&&k>=0){rQueue.splice(k,1);rQueue.unshift(cur);rQi=0;}}
+      radioPanel(true);
+    }
   });
   document.addEventListener('click',()=>{if(!pn.hidden)radioPanel(false);});
   plAudio.addEventListener('play',radioUI);
