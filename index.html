@@ -47,6 +47,10 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 .brand-mark{width:32px;height:32px;display:grid;place-items:center;background:var(--gold);color:#120e02;font-weight:900;font-size:.8rem;box-shadow:0 0 18px rgba(242,183,5,.28)}
 .topbar .acct:first-of-type{margin-left:auto}
 .radio:not([hidden])+.acct{margin-left:0}
+.page.join{border-color:rgba(242,183,5,.45)}
+.page.join h2{color:var(--gold)}
+.small-join{border:1px solid rgba(242,183,5,.45);background:rgba(242,183,5,.07);padding:14px 16px}
+.small-join p{margin:0 0 10px}
 .acct{flex:none;height:34px;min-width:34px;padding:0 10px;border:1px solid var(--gold);background:transparent;color:var(--gold);font-weight:800;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;display:flex;align-items:center;gap:6px}
 .acct img{width:26px;height:26px;border-radius:50%;display:block}
 .acct.in{padding:0 3px;border-color:rgba(242,183,5,.5)}
@@ -72,6 +76,9 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 .pl-al small{color:var(--muted)}
 .pl-al.on{border-color:var(--gold);color:var(--gold)}
 @media (max-width:560px){.pl-title{display:none}.brand-text{font-size:1.05rem}}
+/* celular estreito: a marca não quebra linha; o "anterior" da rádio sai para caber o Entrar */
+.brand-text{white-space:nowrap}
+@media (max-width:430px){#plPrev{display:none}.brand-text{font-size:.95rem}.topbar{gap:8px;padding:0 10px}}
 .brand-text{font-family:var(--display);color:var(--gold);font-size:1.3rem;line-height:1;letter-spacing:.03em;text-decoration:none}
 #errbar{position:sticky;top:52px;z-index:10;background:var(--pen);color:#fff;padding:10px 16px;font-size:15px}
 .wrap{max-width:680px;margin:0 auto;padding:20px 14px 60px}
@@ -614,6 +621,16 @@ function cloudLabel(){
   if(cloudState==='sync')return 'Sincronizando com a sua conta ('+who+')…';
   return 'Progresso salvo na sua conta Google ('+who+'). Continua de onde parou em qualquer aparelho.';
 }
+function joinCard(compact){
+  if(!window.CBJRCloud||cloudUser)return '';
+  if(compact)return `<div class="join small-join"><p><strong>Quer guardar seu progresso?</strong> Entre com sua conta Google e faça parte da Família 013.</p><button class="btn" data-act="login">Entrar com Google</button></div>`;
+  return `<div class="page art art-full join" style="--art:url('assets/arte/galera.jpg')">
+    <div class="kind">Família 013</div>
+    <h2>Quer guardar seu progresso?</h2>
+    <p>Entre com sua conta Google e faça parte da Família 013. Suas fases, estrelas e XP ficam salvos na conta, e você continua de onde parou no celular ou no computador.</p>
+    <div class="row"><button class="btn" data-act="login">Entrar com Google</button></div>
+  </div>`;
+}
 function renderAccount(){
   const b=document.getElementById('acct');if(!b)return;
   b.hidden=!window.CBJRCloud;
@@ -713,6 +730,7 @@ function cloudInit(){
   renderAccount();
   window.CBJRCloud.onUser(u=>{
     cloudUser=u||null;cloudState=u?'sync':'off';renderAccount();
+    if(view==='home'||view==='welcome'||(view==='lesson'&&S.session&&S.session.phase==='summary'))render();
     if(u)cloudPull();
   });
 }
@@ -883,7 +901,7 @@ function vHome(){
   }
   else{
     const label=m.cur>=m.n?'Chefão do mundo '+m.L:'Fase '+(m.cur+1)+': '+m.list[m.cur][1];
-    todayBox=`<div class="today">${mascot('idle',56)}<div class="grow"><strong>${streak?`Jogue hoje para manter seus ${streak} ${streak===1?'dia':'dias'} de 🔥`:'Comece sua sequência de dias hoje'}</strong><div class="muted small">${esc(label)}${due?`. ${due} ${due===1?'erro antigo volta':'erros antigos voltam'} para revisão.`:''}</div></div></div>
+    todayBox=`<div class="today">${mascot('idle',56)}<div class="grow"><strong>${streak?`Jogue hoje para manter ${streak===1?'seu 1 dia':'seus '+streak+' dias'} de 🔥`:'Comece sua sequência de dias hoje'}</strong><div class="muted small">${esc(label)}${due?`. ${due} ${due===1?'erro antigo volta':'erros antigos voltam'} para revisão.`:''}</div></div></div>
       <div class="row" style="margin-top:12px"><button class="btn" data-act="playPhase" data-arg="${m.cur}">Jogar agora</button></div>`;
   }
   const bars=['grammar','vocab','listening','writing'].map(k=>{const v=avg(S.skills[k]);return `<div class="bar"><span>${SKILL_NAME[k]}</span><span class="track"><i style="width:0;transition:width .8s ease-out" data-w="${v==null?0:v}"></i></span><span>${v==null?'–':v+'%'}</span></div>`;}).join('');
@@ -895,6 +913,7 @@ function vHome(){
     <div class="flame" title="Dias seguidos"><span class="${streak?'f':''}">🔥</span> ${streak}</div>
   </div>`;})()}
   <div class="page art art-full" style="--art:url('assets/arte/arcade.jpg')">${todayBox}</div>
+  ${joinCard(false)}
   <div class="page trail">
     ${WORLD_ALBUM[m.L]?`<div class="album"><img src="${WORLD_ALBUM[m.L].cover}" alt="Capa do álbum ${esc(WORLD_ALBUM[m.L].name)}" onerror="this.remove()"><div><div class="kind">Mundo ${m.L}</div><div class="an">${esc(WORLD_ALBUM[m.L].name)}</div><div class="ay">${WORLD_ALBUM[m.L].year}</div></div></div>`:''}
     <div class="world">
@@ -1368,7 +1387,8 @@ function vSummary(s){
     <p class="flame"><span class="f">🔥</span> ${currentStreak()} ${currentStreak()===1?'dia seguido':'dias seguidos'}</p>
     ${status}
     ${wrong?`<p class="muted">${wrong} ${wrong===1?'item errado entrou':'itens errados entraram'} na revisão e ${wrong===1?'volta':'voltam'} a partir de amanhã.</p>`:''}
-    <div class="row"><button class="btn" data-act="closeSession">Voltar ao mapa</button></div>
+    ${joinCard(true)}
+    <div class="row"><button class="btn${window.CBJRCloud&&!cloudUser?' ghost':''}" data-act="closeSession">Voltar ao mapa</button></div>
   </div>`;
 }
 
