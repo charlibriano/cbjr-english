@@ -23,7 +23,26 @@
 }
 *{box-sizing:border-box}
 html,body{margin:0}
-body{background:var(--bg) radial-gradient(ellipse 90% 40% at 50% 0%,rgba(242,183,5,.06),transparent 60%) no-repeat fixed;color:var(--ink);font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+body{background:var(--bg);color:var(--ink);font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+/* Fundo: foto do show (fundo-cbjr2 do Quiz) numa camada fixa, desbotada e com véu,
+   para dar clima sem brigar com a leitura. Os cartões continuam sólidos por cima. */
+body::before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:url('assets/arte/fundo-show.jpg') center 18%/cover no-repeat;filter:grayscale(.7) contrast(1.05) brightness(.9)}
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(ellipse 90% 45% at 50% 0%,rgba(242,183,5,.10),transparent 60%),
+             linear-gradient(180deg,rgba(10,10,10,.55) 0%,rgba(10,10,10,.82) 45%,rgba(10,10,10,.93) 100%)}
+/* Arte dentro dos cartões, como os modos da home do Quiz: ilustração em preto e branco
+   com véu, que "respira" para cor cheia por um instante a cada 7 segundos. */
+.page.art{overflow:hidden;isolation:isolate}
+.page.art::before{content:"";position:absolute;z-index:-1;pointer-events:none;background:var(--art) center/cover no-repeat;filter:grayscale(1) brightness(.85);animation:artbreathe 7s ease-in-out infinite}
+.page.art::after{content:"";position:absolute;z-index:-1;pointer-events:none}
+.page.art-full::before,.page.art-full::after{inset:0}
+.page.art-full::after{background:linear-gradient(90deg,rgba(20,20,20,.96) 30%,rgba(20,20,20,.72) 65%,rgba(20,20,20,.45))}
+.page.art-top::before,.page.art-top::after{left:0;right:0;top:0;height:170px}
+.page.art-top::after{background:linear-gradient(180deg,rgba(20,20,20,.35) 0%,rgba(20,20,20,.8) 60%,#141414 100%)}
+.page.art-top{padding-top:118px}
+@keyframes artbreathe{0%,78%,100%{filter:grayscale(1) brightness(.85)}84%,92%{filter:grayscale(0) brightness(1)}}
+@media (prefers-reduced-motion:reduce){.page.art::before{animation:none}}
 .topbar{position:sticky;top:0;z-index:9;display:flex;align-items:center;gap:10px;height:52px;padding:0 16px;background:rgba(8,8,8,.92);border-bottom:1px solid rgba(242,183,5,.18);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 .brand-mark{width:32px;height:32px;display:grid;place-items:center;background:var(--gold);color:#120e02;font-weight:900;font-size:.8rem;box-shadow:0 0 18px rgba(242,183,5,.28)}
 .radio{margin-left:auto;display:flex;align-items:center;gap:6px}
@@ -556,7 +575,7 @@ function renderFoot(){document.getElementById('foot').textContent=syncLabel;}
 
 /* ---------- telas: boas-vindas e teste de nível ---------- */
 function vWelcome(){
-  return `<div class="page stack">
+  return `<div class="page stack art art-top" style="--art:url('assets/arte/galera.jpg')">
     <h1>Aprenda inglês no ritmo do 013</h1>
     <p>Primeiro um teste curto, de até 12 questões, para descobrir o seu nível. Depois, um mapa de fases do seu nível: cada fase tem uma dica rápida em português, exercícios de produção (você escreve, não só clica), ditado com áudio, minijogos e um texto curto no final.</p>
     <p>O que você errar volta nos dias seguintes, em intervalos cada vez maiores, até fixar. A próxima fase só abre quando você acerta pelo menos 70% da atual.</p>
@@ -599,7 +618,7 @@ function finishPlacement(study){
 function vPlaceResult(){
   const L=LEVELS[P.result];
   const below=P.result>0?LEVELS[P.result-1]:null;
-  return `<div class="page stack">
+  return `<div class="page stack art art-top" style="--art:url('assets/arte/trofeu.jpg')">
     <div class="kind">Resultado</div>
     <div class="level">${L}</div>
     <h1>${esc(LEVEL_NAME[L])}</h1>
@@ -713,7 +732,7 @@ function vHome(){
     <div><div class="title">${esc(rankTitle(r.lvl))}. ${r.into} de ${r.need} XP para o nível ${r.lvl+1}</div><div class="track"><i style="width:0;transition:width .8s ease-out" data-w="${r.into/r.need*100}"></i></div></div>
     <div class="flame" title="Dias seguidos"><span class="${streak?'f':''}">🔥</span> ${streak}</div>
   </div>`;})()}
-  <div class="page">${todayBox}</div>
+  <div class="page art art-full" style="--art:url('assets/arte/arcade.jpg')">${todayBox}</div>
   <div class="page">
     ${WORLD_ALBUM[m.L]?`<div class="album"><img src="${WORLD_ALBUM[m.L].cover}" alt="Capa do álbum ${esc(WORLD_ALBUM[m.L].name)}" onerror="this.remove()"><div><div class="kind">Mundo ${m.L}</div><div class="an">${esc(WORLD_ALBUM[m.L].name)}</div><div class="ay">${WORLD_ALBUM[m.L].year}</div></div></div>`:''}
     <div class="world">
@@ -723,7 +742,7 @@ function vHome(){
     <div class="progress" style="margin-top:12px"><i style="width:${m.cur/m.n*100}%"></i></div>
     ${vMap(m)}
   </div>
-  <div class="page">
+  <div class="page art art-full" style="--art:url('assets/arte/medalhas.jpg')">
     <h2>Habilidades</h2>
     <p class="muted small">Média das últimas 10 partidas em cada tipo de exercício.</p>
     <div class="bars">${bars}</div>
@@ -812,7 +831,7 @@ function vLesson(){
 function vIntro(s){
   const L=s.lesson;
   return `<div class="talk">${mascot('idle',72)}<div class="bubble">Dica rápida e já vamos jogar!</div></div>
-  <div class="page enter">
+  <div class="page enter art art-top" style="--art:url('assets/arte/caderno.jpg')">
     <div class="kind">Dica rápida antes da partida. ${esc(s.level)}: ${esc(s.topic)}</div>
     <h1>${esc(L.title)}</h1>
     ${md(L.explanation)}
@@ -1010,7 +1029,7 @@ function vLightning(s){
   }
   if(!X.lg){
     return `<div class="talk">${mascot('idle',72)}<div class="bubble">Rodada relâmpago!</div></div>
-    <div class="page enter stack">
+    <div class="page enter stack art art-full" style="--art:url('assets/arte/console.jpg')">
       <h1>${LG_SECONDS} segundos</h1>
       <p>Vão aparecer frases, uma de cada vez. Diga se cada uma está <strong>certa</strong> ou <strong>errada</strong>, o mais rápido que conseguir. Acertos seguidos valem mais XP.</p>
       <p class="muted small">No teclado: seta para a esquerda = Errada, seta para a direita = Certa.</p>
@@ -1174,7 +1193,7 @@ function vSummary(s){
       :'<p>Abaixo de 70%. Jogue esta fase de novo para liberar a próxima. As questões são sempre novas.</p>';
   }
   return `<div class="talk">${mascot(stars>=2?'cheer':'happy',84)}<div class="bubble">${s.worldUp||s.champion?'Mundo novo à vista!':stars===3?'Partida perfeita!':stars===2?'Mandou muito bem!':'Partida concluída. Amanhã tem mais!'}</div></div>
-  <div class="page stack">
+  <div class="page stack art art-top" style="--art:url('assets/arte/trofeu.jpg')">
     <div class="kind">Partida concluída</div>
     <div class="stars" aria-label="${stars} de 3 estrelas">${[0,1,2].map(k=>`<span class="${k<stars?'on':'off'}">★</span>`).join('')}</div>
     ${after>before?`<div class="levelup">Você subiu para o nível ${after} de jogador: ${esc(rankTitle(after))}!</div>`:''}
