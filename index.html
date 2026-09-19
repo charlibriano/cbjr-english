@@ -45,6 +45,13 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 @media (prefers-reduced-motion:reduce){.page.art::before{animation:none}}
 .topbar{position:sticky;top:0;z-index:9;display:flex;align-items:center;gap:10px;height:52px;padding:0 16px;background:rgba(8,8,8,.92);border-bottom:1px solid rgba(242,183,5,.18);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 .brand-mark{width:32px;height:32px;display:grid;place-items:center;background:var(--gold);color:#120e02;font-weight:900;font-size:.8rem;box-shadow:0 0 18px rgba(242,183,5,.28)}
+.topbar .acct:first-of-type{margin-left:auto}
+.radio:not([hidden])+.acct{margin-left:0}
+.acct{flex:none;height:34px;min-width:34px;padding:0 10px;border:1px solid var(--gold);background:transparent;color:var(--gold);font-weight:800;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.acct img{width:26px;height:26px;border-radius:50%;display:block}
+.acct.in{padding:0 3px;border-color:rgba(242,183,5,.5)}
+.acct .dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.acct .dot.ok{background:var(--ok)}.acct .dot.err{background:var(--pen)}
 .radio{margin-left:auto;display:flex;align-items:center;gap:6px}
 .pl-cover{width:34px;height:34px;padding:0;border:1px solid rgba(242,183,5,.4);background:#1b1b1b;display:grid;place-items:center;overflow:hidden;color:var(--gold);font-size:1rem}
 .pl-cover img{width:100%;height:100%;object-fit:cover;display:block}
@@ -291,6 +298,37 @@ input[type=text]:focus,textarea:focus{border-color:var(--btn);outline:none}
 }
 </style>
 <script src="assets/radio.js"></script>
+<script type="module">
+/* Login Google e progresso na nuvem, no mesmo projeto Firebase do Quiz CBJR V2
+   (a mesma conta serve para os dois). Cada jogador tem um documento próprio em
+   cbjr_english/{uid}. Se este módulo não carregar, o jogo segue salvando só no aparelho. */
+import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+const firebaseConfig={
+  apiKey:'AIzaSyCT1btbLIMehCj3xldw5LOB-snjyF4SKhw',
+  authDomain:'ranking-cbjr.firebaseapp.com',
+  databaseURL:'https://ranking-cbjr-default-rtdb.firebaseio.com',
+  projectId:'ranking-cbjr',
+  storageBucket:'ranking-cbjr.firebasestorage.app',
+  messagingSenderId:'681180179118',
+  appId:'1:681180179118:web:fe10833848e8bb8194db3f',
+  measurementId:'G-QK5QE2Y1CC'
+};
+const app=getApps().length?getApp():initializeApp(firebaseConfig);
+const auth=getAuth(app),db=getFirestore(app),provider=new GoogleAuthProvider();
+provider.setCustomParameters({prompt:'select_account'});
+window.CBJRCloud={
+  login:()=>signInWithPopup(auth,provider),
+  logout:()=>signOut(auth),
+  onUser:cb=>onAuthStateChanged(auth,cb),
+  // O progresso vai como texto JSON num campo só: evita as restrições do Firestore
+  // com listas dentro de listas e valores vazios.
+  load:async uid=>{const sn=await getDoc(doc(db,'cbjr_english',uid));return sn.exists()?sn.data():null;},
+  save:(uid,json,updatedAt)=>setDoc(doc(db,'cbjr_english',uid),{data:json,updatedAt,savedAt:serverTimestamp()})
+};
+window.dispatchEvent(new Event('cbjr-cloud-ready'));
+</script>
 </head>
 <body>
 <header class="topbar"><span class="brand-mark">013</span><a class="brand-text" href="./">CBJR ENGLISH</a>
@@ -301,6 +339,7 @@ input[type=text]:focus,textarea:focus{border-color:var(--btn);outline:none}
     <button class="pl-btn main" id="plPlay" aria-label="Tocar"><svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg></button>
     <button class="pl-btn" id="plNext" aria-label="Próxima música"><svg viewBox="0 0 24 24"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg></button>
   </div>
+  <button class="acct" id="acct" hidden>Entrar</button>
 </header>
 <div class="pl-panel" id="plPanel" hidden></div>
 <audio id="plAudio" preload="none"></audio>
@@ -536,12 +575,13 @@ function afterRender(){
 const KEY='caderno-ingles-v1';
 function fresh(){return {v:1,updatedAt:0,level:null,placement:null,streak:0,lastDone:null,history:[],review:[],topicIdx:{},skills:{grammar:[],vocab:[],listening:[],writing:[]},session:null,levelUpReady:false,xp:0,sound:true,stars:{},champion:false,recent:{},accepted:{}};}
 let S=fresh();
-let syncLabel='Progresso salvo neste aparelho. Para levar para outro, use Exportar e Importar no fim da tela inicial.';
+let syncLabel='Progresso salvo neste aparelho. Entre com o Google para salvar na sua conta e jogar em qualquer aparelho.';
 function loadLocal(){try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(fresh(),JSON.parse(r));}catch(e){}}
 function touch(){S.updatedAt=Date.now();S.history=S.history.slice(-90);S.review=S.review.slice(-150);}
 function save(){
   try{localStorage.setItem(KEY,JSON.stringify(S));}
   catch(e){showError('Não consegui salvar o progresso neste navegador ('+e.message+').');}
+  cloudSchedule();
 }
 function exportProgress(){
   const blob=new Blob([JSON.stringify(S)],{type:'application/json'});
@@ -564,6 +604,121 @@ function importProgress(file){
   rd.readAsText(file);
 }
 
+/* ---------- conta Google e nuvem ---------- */
+const LINK_KEY='cbjr-english-linked';   // qual conta já foi ligada a este aparelho
+let cloudUser=null,cloudState='off',cloudTimer=null,cloudBusy=false,cloudAgain=false,cloudErrShown=false;
+function cloudLabel(){
+  if(!cloudUser)return 'Progresso salvo neste aparelho. Entre com o Google para salvar na sua conta e jogar em qualquer aparelho.';
+  const who=cloudUser.email||cloudUser.displayName||'sua conta';
+  if(cloudState==='err')return 'Não consegui salvar na nuvem agora ('+who+'). O progresso continua salvo neste aparelho e sobe na próxima tentativa.';
+  if(cloudState==='sync')return 'Sincronizando com a sua conta ('+who+')…';
+  return 'Progresso salvo na sua conta Google ('+who+'). Continua de onde parou em qualquer aparelho.';
+}
+function renderAccount(){
+  const b=document.getElementById('acct');if(!b)return;
+  b.hidden=!window.CBJRCloud;
+  if(cloudUser){
+    b.classList.add('in');
+    b.innerHTML=(cloudUser.photoURL?`<img src="${esc(cloudUser.photoURL)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`:'')+`<span class="dot ${cloudState==='err'?'err':cloudState==='in'?'ok':''}"></span>`;
+    b.setAttribute('aria-label','Conta Google: '+(cloudUser.email||'')+'. Toque para sair.');
+    b.title=cloudUser.email||'';
+  }else{
+    b.classList.remove('in');b.textContent='Entrar';
+    b.setAttribute('aria-label','Entrar com a conta Google');b.title='Entrar com a conta Google';
+  }
+  syncLabel=cloudLabel();renderFoot();
+}
+function cloudSchedule(){
+  if(!cloudUser||!window.CBJRCloud)return;
+  clearTimeout(cloudTimer);cloudTimer=setTimeout(cloudPush,1500);
+}
+async function cloudPush(){
+  if(!cloudUser||!window.CBJRCloud)return;
+  if(cloudBusy){cloudAgain=true;return;}
+  cloudBusy=true;
+  try{
+    await window.CBJRCloud.save(cloudUser.uid,JSON.stringify(S),S.updatedAt||Date.now());
+    if(cloudState!=='in'){cloudState='in';renderAccount();}
+    cloudErrShown=false;
+  }catch(e){
+    cloudState='err';renderAccount();
+    if(!cloudErrShown){cloudErrShown=true;showError('Não consegui salvar na sua conta ('+(e.code||e.message)+'). '+(String(e.code).includes('permission')?'As regras do Firestore ainda não liberam a coleção cbjr_english.':'O progresso continua salvo neste aparelho.'));}
+  }
+  cloudBusy=false;
+  if(cloudAgain){cloudAgain=false;cloudPush();}
+}
+function hasProgress(x){return !!(x&&x.level&&((x.xp||0)>0||(x.history&&x.history.length)));}
+function useRemote(remote){
+  S=Object.assign(fresh(),remote);bank=null;bankLevel=null;
+  try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}
+  if(view!=='lesson'||!S.session){homeScroll=true;view=S.level?'home':'welcome';}
+  render();
+}
+async function cloudPull(){
+  const uid=cloudUser.uid;
+  cloudState='sync';renderAccount();
+  let d;
+  try{d=await window.CBJRCloud.load(uid);}
+  catch(e){
+    cloudState='err';renderAccount();
+    showError('Não consegui ler seu progresso na conta ('+(e.code||e.message)+'). '+(String(e.code).includes('permission')?'As regras do Firestore ainda não liberam a coleção cbjr_english.':''));
+    return;
+  }
+  let remote=null;
+  if(d&&typeof d.data==='string'){try{remote=JSON.parse(d.data);}catch(e){}}
+  const linked=localStorage.getItem(LINK_KEY)===uid;
+  if(!remote){
+    // conta ainda sem progresso: sobe o deste aparelho
+    try{localStorage.setItem(LINK_KEY,uid);}catch(e){}
+    if(S.level){S.updatedAt=S.updatedAt||Date.now();await cloudPush();}else{cloudState='in';renderAccount();}
+    return;
+  }
+  if(!linked){
+    // primeira vez desta conta neste aparelho: nunca sobrescreve sem perguntar
+    let takeRemote=true;
+    if(hasProgress(S)&&JSON.stringify(S)!==JSON.stringify(remote)){
+      const r=rankOf(remote.xp).lvl,l=rankOf(S.xp).lvl;
+      takeRemote=confirm(`Sua conta já tem um progresso salvo: mundo ${remote.level||'?'}, Nv ${r}, ${remote.xp||0} XP.\nEste aparelho tem outro: mundo ${S.level}, Nv ${l}, ${S.xp||0} XP.\n\nOK = usar o progresso da conta\nCancelar = substituir o da conta pelo deste aparelho`);
+    }
+    try{localStorage.setItem(LINK_KEY,uid);}catch(e){}
+    if(takeRemote){useRemote(remote);cloudState='in';renderAccount();}
+    else{S.updatedAt=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}await cloudPush();}
+    return;
+  }
+  // aparelho já ligado a esta conta: vale o mais recente
+  if((remote.updatedAt||0)>(S.updatedAt||0))useRemote(remote);
+  else if((S.updatedAt||0)>(remote.updatedAt||0)){await cloudPush();return;}
+  cloudState='in';renderAccount();
+}
+async function cloudLogin(){
+  if(!window.CBJRCloud){showError('O login ainda está carregando. Tente de novo em alguns segundos.');return;}
+  try{await window.CBJRCloud.login();}
+  catch(e){
+    const c=String(e&&e.code||'');
+    if(c.includes('popup-closed')||c.includes('cancelled-popup'))return;
+    if(c.includes('unauthorized-domain'))showError('Domínio não autorizado no Firebase: adicione charlibriano.github.io em Authentication > Settings > Authorized domains.');
+    else if(c.includes('popup-blocked'))showError('O navegador bloqueou a janela de login. Permita pop-ups para este site e toque em Entrar de novo.');
+    else showError('Não consegui entrar com o Google ('+(c||e.message)+').');
+  }
+}
+async function cloudLogout(){
+  if(!confirm('Sair da conta '+(cloudUser&&cloudUser.email||'')+'? O progresso continua salvo na conta e neste aparelho.'))return;
+  clearTimeout(cloudTimer);
+  if(cloudUser)await cloudPush();
+  try{localStorage.removeItem(LINK_KEY);}catch(e){}
+  try{await window.CBJRCloud.logout();}catch(e){showError('Não consegui sair ('+(e.code||e.message)+').');}
+}
+function cloudInit(){
+  if(!window.CBJRCloud||cloudInit.done)return;cloudInit.done=true;
+  renderAccount();
+  window.CBJRCloud.onUser(u=>{
+    cloudUser=u||null;cloudState=u?'sync':'off';renderAccount();
+    if(u)cloudPull();
+  });
+}
+window.addEventListener('cbjr-cloud-ready',cloudInit);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&cloudTimer){clearTimeout(cloudTimer);cloudTimer=null;cloudPush();}});
+
 /* ---------- navegação ---------- */
 let view='welcome';
 let P=null;      // teste de nível em andamento (não é gravado)
@@ -585,7 +740,8 @@ function vWelcome(){
     <h1>Aprenda inglês no ritmo do 013</h1>
     <p>Primeiro um teste curto, de até 12 questões, para descobrir o seu nível. Depois, um mapa de fases do seu nível: cada fase tem uma dica rápida em português, exercícios de produção (você escreve, não só clica), ditado com áudio, minijogos e um texto curto no final.</p>
     <p>O que você errar volta nos dias seguintes, em intervalos cada vez maiores, até fixar. A próxima fase só abre quando você acerta pelo menos 70% da atual.</p>
-    <div class="row"><button class="btn" data-act="startPlacement">Fazer o teste de nível</button></div>
+    <div class="row"><button class="btn" data-act="startPlacement">Fazer o teste de nível</button>
+    ${window.CBJRCloud&&!cloudUser?'<button class="btn ghost" data-act="login">Já jogo: entrar com Google</button>':''}</div>
   </div>`;
 }
 function pickPlace(band,n){return shuffle(PLACE[band]).slice(0,n).map(it=>({q:it.q,right:it.o[0],opts:shuffle(it.o)}));}
@@ -754,6 +910,7 @@ function vHome(){
     <div class="bars">${bars}</div>
   </div>
   <div class="row" style="margin-top:10px;padding:0 4px;gap:18px">
+    ${window.CBJRCloud&&!cloudUser?'<button class="btn link" data-act="login" style="color:var(--gold)">Entrar com Google para salvar na nuvem</button>':''}
     <button class="btn link" data-act="exportProg">Exportar progresso</button>
     <button class="btn link" data-act="importProg">Importar progresso</button>
     <button class="btn link" data-act="retest">Refazer o teste de nível</button>
@@ -1235,6 +1392,7 @@ const ACT={
   goHome:()=>{stopTick();X.lg=null;mapSel=null;homeScroll=true;view=S.level?'home':'welcome';render();window.scrollTo(0,0);},
   newLesson,
   override,
+  login:cloudLogin,
   copyWriting,
   exportProg:exportProgress,
   importProg:()=>{const f=document.getElementById('importFile');if(f){f.value='';f.click();}},
@@ -1398,6 +1556,8 @@ if(R&&R.length&&plAudio){
 }
 
 /* ---------- início ---------- */
+document.getElementById('acct').addEventListener('click',()=>{cloudUser?cloudLogout():cloudLogin();});
+if(window.CBJRCloud)cloudInit();
 loadLocal();
 view=S.level?'home':'welcome';
 render();
