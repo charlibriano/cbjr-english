@@ -207,6 +207,12 @@ input[type=text]:focus,textarea:focus{border-color:var(--btn);outline:none}
 .corr{animation:fadeup .35s ease-out both}
 .confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:20}
 /* mapa de fases */
+/* O cartão da trilha fica translúcido: a foto do show aparece por trás dos discos.
+   Os textos ganham sombra para continuar legíveis sobre a imagem. */
+.page.trail{background:rgba(12,12,12,.38);border-color:rgba(242,183,5,.16)}
+.page.trail .nl,.page.trail .kind,.page.trail .muted,.page.trail .ay,.page.trail .an,.page.trail .level{text-shadow:0 1px 3px #000,0 0 8px rgba(0,0,0,.9)}
+.page.trail .nl{color:#d6d2ca}
+.page.trail .progress{background:rgba(255,255,255,.12)}
 .world{display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
 .album{display:flex;gap:14px;align-items:center;margin:0 0 14px}
 .album img{width:84px;height:84px;object-fit:cover;flex:none;border:1px solid rgba(242,183,5,.35);box-shadow:0 8px 24px rgba(0,0,0,.6)}
@@ -733,7 +739,7 @@ function vHome(){
     <div class="flame" title="Dias seguidos"><span class="${streak?'f':''}">🔥</span> ${streak}</div>
   </div>`;})()}
   <div class="page art art-full" style="--art:url('assets/arte/arcade.jpg')">${todayBox}</div>
-  <div class="page">
+  <div class="page trail">
     ${WORLD_ALBUM[m.L]?`<div class="album"><img src="${WORLD_ALBUM[m.L].cover}" alt="Capa do álbum ${esc(WORLD_ALBUM[m.L].name)}" onerror="this.remove()"><div><div class="kind">Mundo ${m.L}</div><div class="an">${esc(WORLD_ALBUM[m.L].name)}</div><div class="ay">${WORLD_ALBUM[m.L].year}</div></div></div>`:''}
     <div class="world">
       <div>${WORLD_ALBUM[m.L]?'':'<div class="kind">Mundo</div>'}<div class="level">${m.L}</div><div class="muted small">${esc(LEVEL_NAME[m.L])}${S.champion&&m.L==='C1'?'. Campeão!':''}</div></div>
